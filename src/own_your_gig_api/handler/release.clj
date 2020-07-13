@@ -5,7 +5,7 @@
             [compojure.api.sweet :refer [context]]
             [toucan.db :as db]
             [java-time :as time]
-            [ring.util.http-response :refer [created]]))
+            [ring.util.http-response :refer [ok created]]))
 
 (defn- uid->created
   [uid]
@@ -23,9 +23,16 @@
        :release_uid
        (uid->created)))
 
+(defn get-release-handler
+  []
+  (->> (db/select Release)
+       ok))
+
 (def routes
   (context "/release" []
     :tags ["release"]
     (POST "/" []
       :body [create-release-req ReleaseRequestSchema]
-      (create-release-handler create-release-req))))
+      (create-release-handler create-release-req))
+    (GET "/" []
+         (get-release-handler))))

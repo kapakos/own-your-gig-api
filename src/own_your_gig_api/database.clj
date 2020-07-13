@@ -9,4 +9,4 @@
   (db/set-default-db-connection!
    (clojure.edn/read-string (env :database)))
   (models/set-root-namespace! 'own-your-gig-api.models)
-  types/add-types)
+  (types/add-types))
