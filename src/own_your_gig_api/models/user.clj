@@ -4,5 +4,5 @@
 (defmodel User :user
   IModel
   (types [_]
-         { :userrole :role })
+         {:userrole :role})
   (primary-key [_] :user_uid))

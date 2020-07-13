@@ -1,4 +1,5 @@
 (ns own-your-gig-api.schemas.release
+  (:refer-clojure :exclude [format])
   (:require [schema.core :as s]
             [own-your-gig-api.utils.string_util :as str]
             [java-time :as time]))
@@ -14,13 +15,12 @@
 (defn valid-date?
   [date]
   (try
-    (time/offset-date-time date)
-    (catch Exception e false)
-    (finally true )))
-
+    (let [format (time/formatter :iso-offset-date-time)]
+      (time/offset-date-time format date)
+      true)
+    (catch Exception e false)))
 
 (s/defschema ReleaseRequestSchema
   {:version (s/constrained s/Str valid-version?)
    :status (s/constrained s/Str status-is-one-of?)
-   :release_date (s/constrained s/Str valid-date?)
-   })
+   :release_date (s/constrained s/Str valid-date?)})
