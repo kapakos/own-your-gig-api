@@ -4,6 +4,8 @@
             [io.pedestal.http.body-params :as body-params]
             [own-your-gig-api.handler.task :as task-handler]
             [own-your-gig-api.handler.release :as release-handler]
+            [own-your-gig-api.handler.user :as user-handler]
+            [own-your-gig-api.handler.story :as story-handler]
             [ring.util.response :as ring-resp]))
 
 (defn about-page
@@ -11,10 +13,6 @@
   (ring-resp/response (format "Clojure %s - served from %s"
                               (clojure-version)
                               (route/url-for ::about-page))))
-
-(defn home-page
-  [request]
-  (ring-resp/response {:name "Petros" :last_name "Kapakos"}))
 
 ;; Defines "/" and "/about" routes with their associated :get handlers.
 ;; The interceptors defined after the verb map (e.g., {:get home-page}
@@ -27,7 +25,9 @@
 
 (def routes (clojure.set/union 
               task-handler/routes 
-              release-handler/routes))
+              release-handler/routes
+              user-handler/routes
+              story-handler/routes))
 ;; Map-based routes
 ;(def routes `{"/" {:interceptors [(body-params/body-params) http/html-body]
 ;                   :get home-page

@@ -1,42 +1,53 @@
 (ns own-your-gig-api.handler.release
   (:require [own-your-gig-api.schemas.release :refer [ReleaseRequestSchema]]
             [own-your-gig-api.models.release :refer [Release]]
+            [own-your-gig-api.handler.helper :refer [common-interceptors]]
             [ring.util.response :as ring-resp] 
-            [io.pedestal.http :as http]
-            [io.pedestal.http.body-params :as body-params]
             [toucan.db :as db]
             [java-time :as time]))
 
-(def common-interceptors [(body-params/body-params) http/json-body])
-
-; (defn- uid->created
-;   [uid]
-;   (created (str "/api" "/release/") {:release_uid uid}))
+(defn- uid->created
+  [uid]
+  (ring-resp/created (str "/api" "/release/") {:release_uid uid}))
 
 (defn- timestamp->offset-date-time
   [timestamp]
   (let [format (time/formatter :iso-offset-date-time)]
     (time/offset-date-time format timestamp)))
 
-; (defn create-release-handler
-;   [create-release-req]
-;   (->> (update create-release-req :release_date timestamp->offset-date-time)
-;        (db/insert! Release)
-;        :release_uid
-;        (uid->created)))
+(def db-insert-interceptor
+  {:name :release-db-interceptor
+   :leave
+   (fn [context]
+     (if-let [release (:result context)]
+            (->>
+              (db/insert! Release release)
+              :release_uid
+              (uid->created)
+              (assoc context :response))
+       context))})
 
-(defn get-release-handler
-  [request]
-  (->> (db/select Release)
-       ring-resp/response))
+(def create-release-interceptor
+  {:name :create-release-interceptor
+   :enter
+   (fn [context]
+     (let [release (get-in context [:request :json-params])]
+       (assoc context
+              :result (update release :release_date timestamp->offset-date-time))))})
 
-(def routes #{["/release" :get (conj common-interceptors `get-release-handler)]})
-; (def routes
-;   (context "/release" []
-;     :tags ["release"]
-;     (POST "/" []
-;       :body [create-release-req ReleaseRequestSchema]
-;       (create-release-handler create-release-req))
-;     (GET "/" []
-;          (get-release-handler))))
+(def db-select-interceptor
+ {:name :db-get-release-interceptor
+  :enter 
+  (fn [context]
+   (assoc context :result (db/select Release)))})   
 
+(def list-release-interceptor
+  {:name :list-release-interceptor
+   :leave
+   (fn [context]
+     (if-let [release-data (:result context)]
+         (assoc context :response (ring-resp/response release-data))
+         context))})
+
+(def routes #{["/api/release" :get (conj common-interceptors db-select-interceptor list-release-interceptor) :route-name :release-get]
+              ["/api/release" :post (conj common-interceptors db-insert-interceptor create-release-interceptor) :route-name :release-post]})
