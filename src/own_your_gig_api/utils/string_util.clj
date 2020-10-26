@@ -25,3 +25,7 @@
   [email]
   (boolean (and (string?  email) (re-matches email-regex email))))
 
+(defn str->uuid
+  [uuid]
+  (java.util.UUID/fromString uuid))
+
