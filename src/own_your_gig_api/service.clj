@@ -6,6 +6,7 @@
             [own-your-gig-api.handler.release :as release-handler]
             [own-your-gig-api.handler.user :as user-handler]
             [own-your-gig-api.handler.story :as story-handler]
+            [own-your-gig-api.handler.repository :as repository-handler]
             [ring.util.response :as ring-resp]))
 
 (defn about-page
@@ -27,7 +28,8 @@
               task-handler/routes 
               release-handler/routes
               user-handler/routes
-              story-handler/routes))
+              story-handler/routes
+              repository-handler/routes))
 ;; Map-based routes
 ;(def routes `{"/" {:interceptors [(body-params/body-params) http/html-body]
 ;                   :get home-page

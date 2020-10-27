@@ -29,3 +29,10 @@
   [uuid]
   (java.util.UUID/fromString uuid))
 
+(defn is-uuid?
+  [uid]
+  (->>
+    (uid)
+    (str->uuid)
+    (uuid?)))
+
