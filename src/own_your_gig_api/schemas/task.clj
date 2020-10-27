@@ -21,5 +21,5 @@
 (s/defschema TaskRequestSchema
   {:title (s/constrained s/Str valid-title?)
    :description (s/constrained s/Str valid-desc?)
-   :task_status (s/constrained s/Str status-is-one-of?)})
-
+   :task_status (s/constrained s/Str status-is-one-of?)
+   :story_uid (s/constrained s/Str str/is-uuid?)})
