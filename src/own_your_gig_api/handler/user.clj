@@ -21,6 +21,7 @@
   (->> (db/select User)
        (map #(dissoc % :password_hash))
        ring-resp/response))
+
 (def create-user-interceptor
  {:name :create-user-interceptor
   :enter 

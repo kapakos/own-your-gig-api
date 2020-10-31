@@ -2,7 +2,7 @@
   (:require [own-your-gig-api.schemas.repository :refer [RepositoryRequestSchema]]
             [own-your-gig-api.models.repository :refer [Repository]]
             [own-your-gig-api.utils.string_util :as str] 
-            [own-your-gig-api.handler.helper :refer [common-interceptors]]
+            [own-your-gig-api.handler.helper :refer [common-interceptors db-select-entity]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]))
 
@@ -45,5 +45,5 @@
          (update repository :story_uid str/str->uuid)
          (assoc context :result))))})
 
-(def routes #{["/api/repository" :get (conj common-interceptors db-select-interceptor list-interceptor) :route-name :repository-get]
+(def routes #{["/api/repository" :get (conj common-interceptors (db-select-entity Repository :db-select-repository-interceptor ) list-interceptor) :route-name :repository-get]
               ["/api/repository" :post (conj common-interceptors db-insert-interceptor create-repository-interceptor) :route-name :repository-create]})

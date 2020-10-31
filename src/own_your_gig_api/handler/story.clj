@@ -1,7 +1,7 @@
 (ns own-your-gig-api.handler.story
   (:require [own-your-gig-api.schemas.story :refer [StoryRequestSchema]]
             [own-your-gig-api.models.story :refer [Story]]
-            [own-your-gig-api.handler.helper :refer [common-interceptors]]
+            [own-your-gig-api.handler.helper :refer [common-interceptors db-select-entity]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]
             [java-time :as time]))
@@ -29,12 +29,6 @@
      (let [story (get-in context [:request :json-params])]
        (assoc context :result story)))})
 
-(def db-select-interceptor
- {:name :db-get-story-interceptor
-  :enter 
-  (fn [context]
-   (assoc context :result (db/select Story)))})   
-
 (def list-story-interceptor
   {:name :list-story-interceptor
    :leave
@@ -43,5 +37,5 @@
          (assoc context :response (ring-resp/response story-data))
          context))})
 
-(def routes #{["/api/story" :get (conj common-interceptors db-select-interceptor list-story-interceptor) :route-name :story-get]
+(def routes #{["/api/story" :get (conj common-interceptors ( db-select-entity Story :db-select-story-interceptor ) list-story-interceptor) :route-name :story-get]
               ["/api/story" :post (conj common-interceptors db-insert-interceptor create-story-interceptor) :route-name :story-post]})

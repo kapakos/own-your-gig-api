@@ -3,19 +3,13 @@
   (:require [own-your-gig-api.schemas.task :refer [TaskRequestSchema]]
             [own-your-gig-api.models.task :refer [Task]]
             [own-your-gig-api.utils.string_util :as str] 
-            [own-your-gig-api.handler.helper :refer [common-interceptors]]
+            [own-your-gig-api.handler.helper :refer [common-interceptors db-select-entity]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]))
 
 (defn- uid->created
   [uid]
   (ring-resp/created (str "/api" "/task/") {:task_uid uid}))
-
-(def db-select-interceptor
- {:name :db-get-release-interceptor
-  :enter 
-  (fn [context]
-   (assoc context :result (db/select Task)))})   
 
 (def list-interceptor
   {:name :list-release-interceptor
@@ -46,5 +40,5 @@
          (update task :story_uid str/str->uuid)
          (assoc context :result))))})
 
-(def routes #{["/api/task" :get (conj common-interceptors db-select-interceptor list-interceptor) :route-name :task-get]
+(def routes #{["/api/task" :get (conj common-interceptors ( db-select-entity Task :db-select-task-interceptor ) list-interceptor) :route-name :task-get]
               ["/api/task" :post (conj common-interceptors db-insert-interceptor create-task-interceptor) :route-name :task-create]})
