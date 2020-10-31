@@ -12,6 +12,8 @@
 (defn run-dev
   "The entry-point for 'lein run-dev'"
   [& args]
+  (println "\nConfiguring your data base...")
+  (configure-toucan)
   (println "\nCreating your [DEV] server...")
   (-> service/service ;; start with production configuration
       (merge {:env :dev
