@@ -2,7 +2,8 @@
   (:require [own-your-gig-api.schemas.repository :refer [RepositoryRequestSchema]]
             [own-your-gig-api.models.repository :refer [Repository]]
             [own-your-gig-api.utils.string_util :as str] 
-            [own-your-gig-api.handler.helper :refer [common-interceptors db-select-entity]]
+            [own-your-gig-api.handler.db_helper :refer [db-select-entity]]
+            [own-your-gig-api.handler.interceptors :refer [common-interceptors]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]))
 

@@ -1,7 +1,8 @@
 (ns own-your-gig-api.handler.story
   (:require [own-your-gig-api.schemas.story :refer [StoryRequestSchema]]
             [own-your-gig-api.models.story :refer [Story]]
-            [own-your-gig-api.handler.helper :refer [common-interceptors db-select-entity]]
+            [own-your-gig-api.handler.db_helper :refer [db-select-entity]]
+            [own-your-gig-api.handler.interceptors :refer [common-interceptors]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]
             [java-time :as time]))

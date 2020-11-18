@@ -12,11 +12,14 @@
                  ;; [io.pedestal/pedestal.immutant "0.5.8"]
                  ;; [io.pedestal/pedestal.tomcat "0.5.8"]
 
+                 ;; authentication
+                 [buddy/buddy-auth "2.2.0"]
+
                  [prismatic/schema "1.1.12"]
                  ; Database
                  [toucan "1.15.1"]
                  [org.postgresql/postgresql "42.2.14"]
-                 [buddy/buddy-hashers "1.4.0"]
+                 [buddy/buddy-hashers "1.6.0"]
 
                  ; config
                  [environ "1.2.0"]

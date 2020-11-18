@@ -3,7 +3,8 @@
   (:require [own-your-gig-api.schemas.task :refer [TaskRequestSchema]]
             [own-your-gig-api.models.task :refer [Task]]
             [own-your-gig-api.utils.string_util :as str] 
-            [own-your-gig-api.handler.helper :refer [common-interceptors db-select-entity]]
+            [own-your-gig-api.handler.interceptors :refer [common-interceptors]]
+            [own-your-gig-api.handler.db_helper :refer [db-select-entity]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]))
 

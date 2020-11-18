@@ -1,8 +1,7 @@
 (ns own-your-gig-api.handler.user
   (:require [own-your-gig-api.schemas.user :refer [UserRequestSchema]]
-            [own-your-gig-api.models.user :refer [User]]
-            [own-your-gig-api.handler.helper :refer [common-interceptors]]
-            [buddy.hashers :as hashers]
+            [own-your-gig-api.models.user :refer [User pwd-derive]]
+            [own-your-gig-api.handler.interceptors :refer [common-interceptors]]
             [clojure.set :refer [rename-keys]]
             [ring.util.response :as ring-resp] 
             [toucan.db :as db]))
@@ -13,8 +12,8 @@
 
 (defn canonicalize-user-req
   [user-req]
-  (-> (update user-req :password hashers/derive)
-      (rename-keys {:password  :password_hash})))
+  (-> (update user-req :auth_secret pwd-derive)
+      (rename-keys {:auth_secret :password_hash :auth_username :username :auth_email :email})))
 
 (defn get-users-handler
   [request]
@@ -26,7 +25,7 @@
  {:name :create-user-interceptor
   :enter 
   (fn [context]
-    (let [user (get-in context [:request :json-params])]
+    (let [user (get-in context [:request :form-params])]
       (assoc context :result (canonicalize-user-req user))))})
 
 (def db-create-interceptor

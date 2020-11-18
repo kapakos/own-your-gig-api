@@ -1,9 +1,5 @@
-(ns own-your-gig-api.handler.helper
-  (:require [io.pedestal.http :as http]
-            [io.pedestal.http.body-params :as body-params]
-            [toucan.db :as db]))
-
-(def common-interceptors [(body-params/body-params) http/json-body])
+(ns own-your-gig-api.handler.db_helper
+  (:require [toucan.db :as db]))
 
 (defn db-select-entity
   "Will return a list of all Entities passed as parameter and assign it to the :result key in the context"
